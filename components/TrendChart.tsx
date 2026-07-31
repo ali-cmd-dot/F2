@@ -7,6 +7,7 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  Filler,
   Tooltip,
   Legend,
 } from "chart.js";
@@ -16,11 +17,29 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  Filler,
   Tooltip,
   Legend
 );
 
 type TrendPoint = { label: string; videoRequests: number; critical: number };
+
+function makeGradient(colorHex: string) {
+  return (context: any) => {
+    const chart = context.chart;
+    const { ctx, chartArea } = chart;
+    if (!chartArea) return `${colorHex}00`;
+    const gradient = ctx.createLinearGradient(
+      0,
+      chartArea.top,
+      0,
+      chartArea.bottom
+    );
+    gradient.addColorStop(0, `${colorHex}66`);
+    gradient.addColorStop(1, `${colorHex}00`);
+    return gradient;
+  };
+}
 
 export default function TrendChart({ data }: { data: TrendPoint[] }) {
   const chartData = {
@@ -30,17 +49,29 @@ export default function TrendChart({ data }: { data: TrendPoint[] }) {
         label: "Video Requests",
         data: data.map((d) => d.videoRequests),
         borderColor: "#94EC8E",
-        backgroundColor: "#94EC8E33",
-        tension: 0.35,
-        pointRadius: 2,
+        backgroundColor: makeGradient("#94EC8E"),
+        fill: true,
+        tension: 0.4,
+        borderWidth: 3,
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        pointBackgroundColor: "#94EC8E",
+        pointBorderColor: "#000000",
+        yAxisID: "y",
       },
       {
         label: "Critical Incidents",
         data: data.map((d) => d.critical),
         borderColor: "#FF4D4D",
-        backgroundColor: "#FF4D4D33",
-        tension: 0.35,
-        pointRadius: 2,
+        backgroundColor: makeGradient("#FF4D4D"),
+        fill: true,
+        tension: 0.4,
+        borderWidth: 3,
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        pointBackgroundColor: "#FF4D4D",
+        pointBorderColor: "#000000",
+        yAxisID: "y1",
       },
     ],
   };
@@ -48,21 +79,43 @@ export default function TrendChart({ data }: { data: TrendPoint[] }) {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: { mode: "index" as const, intersect: false },
     plugins: {
-      legend: { labels: { color: "#D8D8D8" } },
+      legend: {
+        labels: { color: "#D8D8D8", usePointStyle: true, boxWidth: 8 },
+      },
+      tooltip: {
+        backgroundColor: "#1E1E1E",
+        borderColor: "#171717",
+        borderWidth: 1,
+        titleColor: "#FFFFFF",
+        bodyColor: "#D8D8D8",
+      },
     },
     scales: {
-      x: { ticks: { color: "#9E9E9E" }, grid: { color: "#171717" } },
-      y: {
+      x: {
         ticks: { color: "#9E9E9E" },
         grid: { color: "#171717" },
+      },
+      y: {
+        position: "left" as const,
+        ticks: { color: "#94EC8E" },
+        grid: { color: "#171717" },
         beginAtZero: true,
+        title: { display: true, text: "Video Requests", color: "#94EC8E" },
+      },
+      y1: {
+        position: "right" as const,
+        ticks: { color: "#FF4D4D" },
+        grid: { drawOnChartArea: false },
+        beginAtZero: true,
+        title: { display: true, text: "Critical", color: "#FF4D4D" },
       },
     },
   };
 
   return (
-    <div className="h-72">
+    <div className="h-96">
       <Line data={chartData} options={options} />
     </div>
   );
