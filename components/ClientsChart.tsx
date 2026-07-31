@@ -8,8 +8,9 @@ import {
   BarElement,
   Tooltip,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, ChartDataLabels);
 
 type ClientCount = { name: string; count: number };
 
@@ -18,10 +19,11 @@ export default function ClientsChart({ data }: { data: ClientCount[] }) {
     labels: data.map((d) => d.name),
     datasets: [
       {
-        label: "Total Issues",
+        label: "Video Requests",
         data: data.map((d) => d.count),
         backgroundColor: "#94EC8E",
         borderRadius: 6,
+        barThickness: 28,
       },
     ],
   };
@@ -30,7 +32,15 @@ export default function ClientsChart({ data }: { data: ClientCount[] }) {
     indexAxis: "y" as const,
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        color: "#000000",
+        anchor: "end" as const,
+        align: "end" as const,
+        font: { weight: "bold" as const },
+      },
+    },
     scales: {
       x: {
         ticks: { color: "#9E9E9E" },
