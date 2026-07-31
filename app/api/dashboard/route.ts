@@ -80,7 +80,8 @@ export async function GET() {
     let videoRequestCount = 0;
     let criticalCount = 0;
 
-    const clientCounts = new Map<string, number>();
+    // Top 5 Clients ab SIRF "Customer request for video" wale rows se banega
+    const videoRequestClientCounts = new Map<string, number>();
     const trendMap = new Map<string, TrendBucket>();
     const ticker: { client: string; headline: string }[] = [];
 
@@ -91,12 +92,16 @@ export async function GET() {
       const year = cleanText(r[COL.YEAR]);
       const month = cleanText(r[COL.MONTH]);
 
-      clientCounts.set(client, (clientCounts.get(client) || 0) + 1);
-
       const isVideoRequest = subRequest === TARGET_SUB_REQUEST;
       const isCritical = incidentType === CRITICAL_LABEL;
 
-      if (isVideoRequest) videoRequestCount++;
+      if (isVideoRequest) {
+        videoRequestCount++;
+        videoRequestClientCounts.set(
+          client,
+          (videoRequestClientCounts.get(client) || 0) + 1
+        );
+      }
       if (isCritical) criticalCount++;
 
       if (year && month) {
@@ -130,7 +135,7 @@ export async function GET() {
       (a, b) => a.year * 100 + a.monthNum - (b.year * 100 + b.monthNum)
     );
 
-    const topClients = Array.from(clientCounts.entries())
+    const topClients = Array.from(videoRequestClientCounts.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([name, count]) => ({ name, count }));
@@ -139,7 +144,6 @@ export async function GET() {
       kpis: {
         videoRequests: videoRequestCount,
         criticalIncidents: criticalCount,
-        totalIssues: validRows.length,
       },
       monthlyTrend,
       topClients,
