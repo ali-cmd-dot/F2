@@ -44,6 +44,16 @@ function cleanText(v: any): string {
     .trim();
 }
 
+// Noise phrases jo headline me nahi chahiye — jaha bhi milein, hata do
+function stripNoise(text: string): string {
+  return text
+    .replace(/device\s*(is)?\s*showing\s*offline/gi, "")
+    .replace(/,\s*,/g, ",")
+    .replace(/^[,\-\s]+|[,\-\s]+$/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function truncate(text: string, max = 110): string {
   if (text.length <= max) return text;
   return text.slice(0, max - 1).trim() + "…";
@@ -80,7 +90,6 @@ export async function GET() {
     let videoRequestCount = 0;
     let criticalCount = 0;
 
-    // Top 5 Clients ab SIRF "Customer request for video" wale rows se banega
     const videoRequestClientCounts = new Map<string, number>();
     const trendMap = new Map<string, TrendBucket>();
     const ticker: { client: string; headline: string }[] = [];
@@ -104,13 +113,19 @@ export async function GET() {
       }
       if (isCritical) criticalCount++;
 
-      if (year && month) {
-        const monthNum = MONTH_ORDER[month.toLowerCase()] || 0;
-        const key = `${year}-${String(monthNum).padStart(2, "0")}`;
+      // --- trend bucket: sirf valid Year(4-digit)+Month wale rows se ---
+      const yearNum = Number(year);
+      const monthNum = MONTH_ORDER[month.toLowerCase()] || 0;
+      const isValidYear =
+        year !== "" && Number.isInteger(yearNum) && yearNum >= 2015 && yearNum <= 2035;
+      const isValidMonth = monthNum >= 1 && monthNum <= 12;
+
+      if (isValidYear && isValidMonth) {
+        const key = `${yearNum}-${String(monthNum).padStart(2, "0")}`;
         if (!trendMap.has(key)) {
           trendMap.set(key, {
-            label: `${month.slice(0, 3)} ${year}`,
-            year: Number(year),
+            label: `${month.slice(0, 3)} ${yearNum}`,
+            year: yearNum,
             monthNum,
             videoRequests: 0,
             critical: 0,
@@ -121,9 +136,10 @@ export async function GET() {
         if (isCritical) bucket.critical++;
       }
 
-      if (isCritical) {
-        const remark = cleanText(r[COL.REMARKS]);
-        const details = cleanText(r[COL.ISSUE_DETAILS]);
+      // --- ticker: sirf Critical + actual footage/video request wale rows ---
+      if (isCritical && isVideoRequest) {
+        const remark = stripNoise(cleanText(r[COL.REMARKS]));
+        const details = stripNoise(cleanText(r[COL.ISSUE_DETAILS]));
         const raw = remark || details;
         if (raw) {
           ticker.push({ client, headline: truncate(raw) });
