@@ -8,7 +8,7 @@ export default function KpiCard({
   accent?: string;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="rounded-2xl border border-border bg-card/80 p-5 shadow-lg shadow-black/40 backdrop-blur-sm">
       <p className="text-sm text-textMuted">{label}</p>
       <p className="mt-2 text-3xl font-bold" style={{ color: accent }}>
         {value}
