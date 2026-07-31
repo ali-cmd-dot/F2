@@ -11,7 +11,6 @@ type DashboardData = {
   kpis: {
     videoRequests: number;
     criticalIncidents: number;
-    totalIssues: number;
   };
   monthlyTrend: { label: string; videoRequests: number; critical: number }[];
   topClients: { name: string; count: number }[];
@@ -57,7 +56,7 @@ export default function Home() {
       {data && <Ticker items={data.ticker} />}
 
       <div className="grid gap-6 p-6">
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <KpiCard
             label="Customer Video Requests"
             value={data?.kpis.videoRequests ?? "—"}
@@ -67,24 +66,19 @@ export default function Home() {
             value={data?.kpis.criticalIncidents ?? "—"}
             accent="#FF4D4D"
           />
-          <KpiCard
-            label="Total Issues Logged"
-            value={data?.kpis.totalIssues ?? "—"}
-            accent="#FFFFFF"
-          />
         </section>
 
         <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="rounded-xl border border-border bg-card p-5">
             <h2 className="mb-4 text-sm font-semibold text-textSecondary">
-              Monthly Trend — Video Requests vs Critical
+              Monthly Trend — Video Requests vs Critical Incidents
             </h2>
             {data && <TrendChart data={data.monthlyTrend} />}
           </div>
 
           <div className="rounded-xl border border-border bg-card p-5">
             <h2 className="mb-4 text-sm font-semibold text-textSecondary">
-              Top 5 Clients by Issue Volume
+              Top 5 Clients — Video Requests
             </h2>
             {data && <ClientsChart data={data.topClients} />}
           </div>
