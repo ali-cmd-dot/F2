@@ -5,17 +5,17 @@ type TickerItem = { client: string; headline: string };
 export default function Ticker({ items }: { items: TickerItem[] }) {
   if (!items || items.length === 0) return null;
 
-  const loopItems = [...items, ...items]; // seamless infinite loop
-  const duration = Math.max(50, items.length * 9); // jitne zyada items, utna slow
+  const loopItems = [...items, ...items];
+  const duration = Math.max(60, items.length * 10); // slow, readable speed
 
   return (
-    <div className="relative flex items-center overflow-hidden border-y border-border bg-card">
-      <div className="z-10 flex flex-shrink-0 items-center gap-2 bg-critical px-4 py-2 text-sm font-bold text-black">
-        <span className="h-2 w-2 animate-pulse rounded-full bg-black" />
-        CRITICAL ALERTS
+    <div className="relative flex items-center gap-3 overflow-hidden border-y border-border bg-card/60 px-3 py-2 backdrop-blur-sm">
+      <div className="z-10 flex flex-shrink-0 items-center gap-2 rounded-full border border-critical/40 bg-critical/10 px-3 py-1.5 text-xs font-medium uppercase tracking-wide text-critical">
+        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-critical" />
+        Footage Alerts
       </div>
       <div
-        className="ticker-track flex whitespace-nowrap py-2"
+        className="ticker-track flex whitespace-nowrap"
         style={{ animationDuration: `${duration}s` }}
       >
         {loopItems.map((item, i) => (
