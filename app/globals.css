@@ -17,7 +17,9 @@ body {
 }
 
 .ticker-track {
-  animation: ticker-scroll 60s linear infinite;
+  animation-name: ticker-scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
   width: max-content;
 }
 
