@@ -39,16 +39,16 @@ export default function Home() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 2 * 60 * 1000); // refresh every 2 min
+    const interval = setInterval(fetchData, 2 * 60 * 1000);
     return () => clearInterval(interval);
   }, [fetchData]);
 
   return (
-    <main className="min-h-screen bg-background text-textPrimary">
+    <main className="min-h-screen text-textPrimary">
       <Header lastUpdated={data?.lastUpdated} />
 
       {error && (
-        <div className="m-6 rounded-lg border border-critical bg-card p-4 text-sm text-critical">
+        <div className="m-6 rounded-2xl border border-critical bg-card/80 p-4 text-sm text-critical backdrop-blur-sm">
           {error}
         </div>
       )}
@@ -69,14 +69,14 @@ export default function Home() {
         </section>
 
         <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div className="rounded-xl border border-border bg-card p-5">
+          <div className="rounded-2xl border border-border bg-card/80 p-5 shadow-lg shadow-black/40 backdrop-blur-sm">
             <h2 className="mb-4 text-sm font-semibold text-textSecondary">
               Monthly Trend — Video Requests vs Critical Incidents
             </h2>
             {data && <TrendChart data={data.monthlyTrend} />}
           </div>
 
-          <div className="rounded-xl border border-border bg-card p-5">
+          <div className="rounded-2xl border border-border bg-card/80 p-5 shadow-lg shadow-black/40 backdrop-blur-sm">
             <h2 className="mb-4 text-sm font-semibold text-textSecondary">
               Top 5 Clients — Video Requests
             </h2>
