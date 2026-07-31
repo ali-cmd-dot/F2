@@ -5,6 +5,14 @@
 body {
   background-color: #000000;
   color: #ffffff;
+  background-image: radial-gradient(
+    ellipse 120% 55% at 50% -10%,
+    rgba(33, 91, 59, 0.35),
+    transparent 60%
+  );
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 @keyframes ticker-scroll {
