@@ -94,10 +94,12 @@ export default function TrendChart({ data }: { data: TrendPoint[] }) {
     },
     scales: {
       x: {
+        type: "category" as const, // <- auto date-parsing band, "Dec 1899" bug fix
         ticks: { color: "#9E9E9E" },
         grid: { color: "#171717" },
       },
       y: {
+        type: "linear" as const,
         position: "left" as const,
         ticks: { color: "#94EC8E" },
         grid: { color: "#171717" },
@@ -105,6 +107,7 @@ export default function TrendChart({ data }: { data: TrendPoint[] }) {
         title: { display: true, text: "Video Requests", color: "#94EC8E" },
       },
       y1: {
+        type: "linear" as const,
         position: "right" as const,
         ticks: { color: "#FF4D4D" },
         grid: { drawOnChartArea: false },
