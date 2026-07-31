@@ -27,6 +27,14 @@ const MONTH_ORDER: Record<string, number> = {
   december: 12,
 };
 
+type TrendBucket = {
+  label: string;
+  year: number;
+  monthNum: number;
+  videoRequests: number;
+  critical: number;
+};
+
 function cleanText(v: any): string {
   if (v === null || v === undefined) return "";
   return String(v)
@@ -73,16 +81,7 @@ export async function GET() {
     let criticalCount = 0;
 
     const clientCounts = new Map<string, number>();
-    const trendMap = new Map
-      string,
-      {
-        label: string;
-        year: number;
-        monthNum: number;
-        videoRequests: number;
-        critical: number;
-      }
-    >();
+    const trendMap = new Map<string, TrendBucket>();
     const ticker: { client: string; headline: string }[] = [];
 
     for (const r of validRows) {
